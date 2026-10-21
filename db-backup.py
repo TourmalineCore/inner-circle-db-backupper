@@ -1,0 +1,93 @@
+import base64
+import json
+import os
+import subprocess
+import logging
+import shutil
+import boto3
+
+NAMESPACE = "local"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(asctime)s]: %(message)s",
+    datefmt="%Y-%m-%dT%H-%M-%S",
+)
+
+def run(cmd):
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    stdout, stderr = process.communicate()
+
+    return stdout
+
+
+def get_db_credentials():
+
+    deployments = json.loads(run(["kubectl", "get", "deployments", "-n", NAMESPACE, "-o", "json"]))
+    
+    secrets_data = json.loads(run(["kubectl", "get", "secrets", "-n", NAMESPACE, "-o", "json"]))
+
+    secrets = {
+        item["metadata"]["name"]: item
+        for item in secrets_data.get("items", [])
+    }
+
+    references = set()
+
+    for deployment in deployments.get("items", []):
+        deployment_name = deployment["metadata"]["name"]
+
+        container = deployment["spec"]["template"]["spec"]["containers"][0]
+
+        for env_from in container.get("envFrom", []):
+            if secret_ref := env_from.get("secretRef"):
+                references.add((
+                    deployment_name,
+                    container["name"],
+                    secret_ref["name"],
+                ))
+
+    connection_strings = []
+
+    for deployment, container, secret_name in sorted(references):
+        secret = secrets.get(secret_name)
+
+        encoded_value = (
+            secret.get("data", {})
+            .get("ConnectionStrings__DefaultConnection")
+        )
+
+        if not encoded_value:
+            continue
+
+        connection_strings.append(base64.b64decode(encoded_value).decode("utf-8"))
+
+    return connection_strings
+
+def upload_to_s3(backup_filename):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv('DESTINATION_AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('DESTINATION_AWS_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('DESTINATION_AWS_ENDPOINT'),
+    )
+
+    bucket_name = os.getenv('DESTINATION_AWS_BUCKET_NAME')
+
+    with open(backup_filename, "rb") as data:
+        s3.upload_fileobj(data, bucket_name, backup_filename)
+
+def main():
+
+  connection_strings = get_db_credentials()
+
+  print(connection_strings)
+
+if __name__ == "__main__":
+  main()
