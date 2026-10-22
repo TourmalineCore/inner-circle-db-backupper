@@ -97,7 +97,7 @@ def main():
   for connection_string in connection_strings:
     db_connection = dict(item.split("=", 1) for item in connection_string.split(";"))
 
-    create_db_backups(db_connection['Host'], db_connection['Username'], db_connection['Password'], db_connection['Database'])
+    create_db_backup(db_connection['Host'], db_connection['Username'], db_connection['Password'], db_connection['Database'])
 
 if __name__ == "__main__":
   main()
