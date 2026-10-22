@@ -6,6 +6,7 @@ COPY db-backup.py .
 ARG TARGETARCH
 
 RUN apk --update add \
+    curl \
     postgresql \
     python3 \
     py3-pip \
