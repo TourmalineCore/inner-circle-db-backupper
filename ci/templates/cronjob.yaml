@@ -14,6 +14,7 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: {{ .Release.Name }}
           restartPolicy: OnFailure
           containers:
             - name: {{ .Release.Name }}
