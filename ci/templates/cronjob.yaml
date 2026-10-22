@@ -17,6 +17,13 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: {{ .Release.Name }}
+              # The "InvalidImageName" error occurs when trying to deploy a locally built docker image with an empty (local) registry. 
+              # If we leave registry empty, then there will be an excess slash(/) in front of the repository
+              {{- if .Values.image.registry }}
+              image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+              {{- else }}
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+              {{- end }}
               resources:
                 limits:
                   cpu: {{ .Values.resources.limits.cpu }}
