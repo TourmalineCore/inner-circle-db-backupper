@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "{{ .Values.extraConfigMapEnvVars.BACKUPS_SCHEDULE }}"
+  # How many completed jobs should be kept
+  successfulJobsHistoryLimit: 1
+  # We use concurrencyPolicy: Forbid to make sure that a new cronjob doesn't kill a previously started cronjob before it's completed
+  # Here you can read about concurrencyPolicy: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ .Release.Name }}
+              resources:
+                limits:
+                  cpu: {{ .Values.resources.limits.cpu }}
+                  memory: {{ .Values.resources.limits.memory }}
+                requests:
+                  cpu: {{ .Values.resources.requests.cpu }}
+                  memory: {{ .Values.resources.requests.memory }}
+              env:
+                - name: NAMESPACE
+                  value: {{ .Release.Namespace }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
