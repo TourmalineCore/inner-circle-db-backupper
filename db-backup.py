@@ -83,7 +83,7 @@ def upload_to_s3(backup_filename):
     with open(backup_filename, "rb") as data:
         s3.upload_fileobj(data, bucket_name, backup_filename)
 
-def create_db_backup(database_host, database_username, database_password, database_name, backup_filename_prefix):
+def create_db_backup(database_host, database_username, database_password, database_name):
     backup_filename = f'{namespace}-{database_name}-{datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S")}.backup'
     
     if not os.path.exists(temp_directory_for_backups):
