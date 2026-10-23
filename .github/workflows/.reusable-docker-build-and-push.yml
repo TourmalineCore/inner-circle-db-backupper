@@ -7,8 +7,7 @@ name: Publish Docker image
 # if you build => deploy => run e2e against prod it will build the image 3 times!
 on:
   # to allow to wait for a docker image to be published to proceed in another workflow
-  # workflow_call:
-  push:
+  workflow_call:
 
 jobs:
   build-amd64:
