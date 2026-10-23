@@ -12,3 +12,5 @@ resources:
     memory: 256Mi
 
 extraConfigMapEnvVars:
+
+extraSecretEnvVars:

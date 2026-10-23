@@ -35,4 +35,12 @@ spec:
               env:
                 - name: NAMESPACE
                   value: {{ .Release.Namespace }}
+                - name: INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID
+                  value: {{ .Values.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID}}
+                - name: INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY
+                  value: {{ .Values.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY}}
+                - name: INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT
+                  value: {{ .Values.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT}}
+                - name: INNER_CIRCLE_BACKUPS_BUCKET_NAME
+                  value: {{ .Values.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_NAME}}
               imagePullPolicy: {{ .Values.image.pullPolicy }}

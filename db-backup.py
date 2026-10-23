@@ -74,12 +74,12 @@ def get_db_credentials():
 def upload_to_s3(backup_filename):
     s3 = boto3.client(
         's3',
-        aws_access_key_id=os.getenv('DESTINATION_AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('DESTINATION_AWS_SECRET_ACCESS_KEY'),
-        endpoint_url=os.getenv('DESTINATION_AWS_ENDPOINT'),
+        aws_access_key_id=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT'),
     )
 
-    bucket_name = os.getenv('DESTINATION_AWS_BUCKET_NAME')
+    bucket_name = os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_NAME')
 
     with open(backup_filename, "rb") as data:
         s3.upload_fileobj(data, bucket_name, backup_filename)
