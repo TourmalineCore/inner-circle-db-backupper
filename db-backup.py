@@ -5,6 +5,7 @@ import subprocess
 import logging
 import shutil
 from datetime import datetime
+import boto3
 
 temp_directory_for_backups = "/tmp/inner-circle"
 namespace = os.getenv("NAMESPACE")
