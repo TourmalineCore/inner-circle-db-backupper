@@ -99,5 +99,12 @@ def main():
 
     create_db_backup(db_connection['Host'], db_connection['Username'], db_connection['Password'], db_connection['Database'])
 
+    archive_name = f'{datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S")}-{namespace}-inner-circle-db-backups'
+
+    if not len(os.listdir(temp_directory_for_backups)) == 0:
+        shutil.make_archive(archive_name, 'zip', temp_directory_for_backups)
+
+        upload_to_s3(archive_name + ".zip")
+
 if __name__ == "__main__":
   main()
