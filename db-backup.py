@@ -93,14 +93,14 @@ def create_db_backup(database_host, database_username, database_password, databa
     os.system(f'PGPASSWORD={database_password} pg_dump -h {database_host} -U {database_username} --encoding UTF8 --format plain {database_name} > {temp_directory_for_backups}/{backup_filename}')
 
 def main():
-  connection_strings = get_db_credentials()
+    connection_strings = get_db_credentials()
   
-  for connection_string in connection_strings:
-    db_connection = dict(item.split("=", 1) for item in connection_string.split(";"))
+    for connection_string in connection_strings:
+        db_connection = dict(item.split("=", 1) for item in connection_string.split(";"))
 
-    create_db_backup(db_connection['Host'], db_connection['Username'], db_connection['Password'], db_connection['Database'])
+        create_db_backup(db_connection['Host'], db_connection['Username'], db_connection['Password'], db_connection['Database'])
 
-    archive_name = f'{datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S")}-{namespace}-inner-circle-db-backups'
+        archive_name = f'{datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S")}-{namespace}-inner-circle-db-backups'
 
     if not len(os.listdir(temp_directory_for_backups)) == 0:
         shutil.make_archive(archive_name, 'zip', temp_directory_for_backups)
