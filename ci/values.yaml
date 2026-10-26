@@ -2,15 +2,16 @@ image:
   registry: ghcr.io
   repository: tourmalinecore/inner-circle-db-backupper
   pullPolicy: Always
+  tag: latest
 
 resources:
   limits:
     cpu: 200m
-    memory: 512Mi
+    memory: 128Mi
   requests:
     cpu: 1m
-    memory: 256Mi
+    memory: 64Mi
 
-extraConfigMapEnvVars:
+extraConfigMapEnvVars: {}
 
-extraSecretEnvVars:
+extraSecretEnvVars: {}
