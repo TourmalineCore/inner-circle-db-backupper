@@ -69,10 +69,7 @@ def get_db_credentials():
     for deployment, container, secret_name in sorted(references):
         secret = secrets.get(secret_name)
 
-        encoded_value = (
-            secret.get("data", {})
-            .get("ConnectionStrings__DefaultConnection")
-        )
+        encoded_value = (secret.get("data", {}).get("ConnectionStrings__DefaultConnection"))
 
         if not encoded_value:
             continue
@@ -88,17 +85,14 @@ def get_db_credentials():
 def upload_to_s3(backup_filename):
     s3 = boto3.client(
         's3',
-        aws_access_key_id=os.getenv(
-            'INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv(
-            'INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY'),
+        aws_access_key_id=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY'),
         endpoint_url=os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT'),
     )
 
     bucket_name = os.getenv('INNER_CIRCLE_BACKUPS_BUCKET_NAME')
     
-    logging.info('Uploading backup "%s" to S3 bucket "%s"',
-                 backup_filename, bucket_name)
+    logging.info('Uploading backup "%s" to S3 bucket "%s"', backup_filename, bucket_name)
     with open(backup_filename, "rb") as data:
         s3.upload_fileobj(data, bucket_name, backup_filename)
     logging.info('Successfully uploaded backup "%s" to S3', backup_filename)
@@ -122,8 +116,7 @@ def main():
     connection_strings = get_db_credentials()
 
     for connection_string in connection_strings:
-        db_connection = dict(item.split("=", 1)
-                             for item in connection_string.split(";"))
+        db_connection = dict(item.split("=", 1) for item in connection_string.split(";"))
 
         create_db_backup(db_connection['Host'], db_connection['Username'],
                          db_connection['Password'], db_connection['Database'])
