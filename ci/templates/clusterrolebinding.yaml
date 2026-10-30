@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+# We are using ClusterRoleBinding so that the synchronizer pod has access to the entire cluster. 
+# If we use RoleBinding, then rights can only be granted within the namespace, which is why services aren't deployed.
+# Here you can read more about ClusterRoleBinding: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+roleRef: 
+  apiGroup: rbac.authorization.k8s.io
+  # If we use rights lower than cluster-admin, the services won't be deployed.
+  # Here you can read more about cluster roles: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}

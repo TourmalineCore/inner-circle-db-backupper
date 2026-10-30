@@ -1,0 +1,21 @@
+repositories:
+  - name: inner-circle-db-backupper
+    url: git+https://github.com/TourmalineCore/inner-circle-db-backupper.git?ref={{ .StateValues.repository.ref }}
+
+releases:
+  - name: inner-circle-db-backupper
+    labels:
+      app: inner-circle-db-backupper
+    wait: true
+    chart: inner-circle-db-backupper/inner-circle-db-backupper
+    values:
+      - values.yaml
+      - image:
+          tag: "{{ .StateValues.image.tag }}"
+      - extraConfigMapEnvVars: 
+          INNER_CIRCLE_BACKUPS_SCHEDULE: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_SCHEDULE }}"
+      - extraSecretEnvVars:
+          INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID }}"
+          INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY }}"
+          INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT }}"
+          INNER_CIRCLE_BACKUPS_BUCKET_NAME: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_NAME }}"

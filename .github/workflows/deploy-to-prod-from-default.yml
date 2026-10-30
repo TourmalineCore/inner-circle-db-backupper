@@ -1,0 +1,29 @@
+name: Deploy to Prod
+
+on:
+  push:
+    branches:
+      - master
+ 
+jobs:
+  docker-build-and-push:
+    uses: ./.github/workflows/.reusable-docker-build-and-push.yml
+
+  deploy-to-prod:
+    needs: [docker-build-and-push]
+    runs-on: self-hosted
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Deploy
+        run: |
+            helmfile cache cleanup && helmfile apply --namespace "${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }}" -f ci/helmfile.yaml \
+            --state-values-set repository.ref="${{ github.sha }}" \
+            --state-values-set image.tag="sha-${{ github.sha }}" \
+            --state-values-set extraConfigMapEnvVars.INNER_CIRCLE_BACKUPS_SCHEDULE="0 19 * * *" \
+            --state-values-set extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID="${{ secrets.INNER_CIRCLE_PROD_BACKUPS_BUCKET_ACCESS_KEY_ID }}" \
+            --state-values-set extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY="${{ secrets.INNER_CIRCLE_PROD_BACKUPS_BUCKET_SECRET_ACCESS_KEY }}" \
+            --state-values-set extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ENDPOINT="${{ secrets.INNER_CIRCLE_PROD_BACKUPS_BUCKET_ENDPOINT }}" \
+            --state-values-set extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_NAME="${{ secrets.INNER_CIRCLE_PROD_BACKUPS_BUCKET_NAME }}" > "/var/log/inner-circle/deploy/$(date +%F)-${{ github.event.repository.name }}-run-${{ github.run_id }}-job-${{ job.check_run_id }}.log" 2>&1
+            # on the last line where we redirect output we don't add a line break for convenience because it is easy to make it wrong having an extra space after \ symbol which leads to exposure of logs to the public pipeline logs instead of the needed private file on a runner
