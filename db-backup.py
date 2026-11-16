@@ -151,7 +151,7 @@ def main():
                 for file in files:
                     archive.write(f"{root}/{file}", file)
 
-            upload_to_s3(archive_name)
+    upload_to_s3(archive_name)
 
 
 if __name__ == "__main__":
