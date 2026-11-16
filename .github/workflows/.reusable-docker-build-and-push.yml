@@ -6,6 +6,9 @@ name: Publish Docker image
 # it will build the docker image it twice
 # if you build => deploy => run e2e against prod it will build the image 3 times!
 on:
+  push:
+    branches:
+      - "feature/**"
   # to allow to wait for a docker image to be published to proceed in another workflow
   workflow_call:
 
