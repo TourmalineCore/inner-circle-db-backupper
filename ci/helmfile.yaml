@@ -13,7 +13,7 @@ releases:
       - image:
           tag: "{{ .StateValues.image.tag }}"
       - extraConfigMapEnvVars: 
-          INNER_CIRCLE_BACKUPS_SCHEDULE: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_SCHEDULE }}"
+          INNER_CIRCLE_BACKUPS_SCHEDULE: "{{ .StateValues.extraConfigMapEnvVars.INNER_CIRCLE_BACKUPS_SCHEDULE }}"
       - extraSecretEnvVars:
           INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_ACCESS_KEY_ID }}"
           INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY: "{{ .StateValues.extraSecretEnvVars.INNER_CIRCLE_BACKUPS_BUCKET_SECRET_ACCESS_KEY }}"
