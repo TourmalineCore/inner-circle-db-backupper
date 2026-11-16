@@ -1,0 +1,9 @@
+apiVersion: v2
+name: inner-circle-db-backupper
+description: Chart that allows you to set up backups for databases
+
+type: application
+
+version: "0.0.1"
+
+appVersion: "0.0.1"
