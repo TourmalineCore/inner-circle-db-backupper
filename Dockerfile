@@ -12,7 +12,8 @@ RUN apk --update add \
     py3-pip \
     && pip3 install --upgrade pip \
     && pip3 install awscli==1.32.0 \
-    && pip install boto3==1.35.41
+    && pip3 install boto3==1.35.41 \
+    && pip3 install pyzipper==0.4.0
 
 # install kubectl https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux
 # curl -Lo - follow redirects and write to file
